@@ -1,48 +1,55 @@
-import React from 'react';
-
+import { useState } from 'react';
 import './app.scss';
-
-// Let's talk about using index.js and some other name in the component folder
-// There's pros and cons for each way of doing this ...
 import Header from './components/header';
 import Footer from './components/footer';
 import Form from './components/form';
 import Results from './components/results';
 
-class App extends React.Component {
+function App() {
+  const [requestData, setRequestData] = useState({});
+  const [responseData, setResponseData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: null,
-      requestParams: {},
-    };
-  }
+  const handleApiCall = (data) => {
+    setLoading(true);
+    setResponseData(null);
+    setTimeout(() => {
+      const fakeApiResponse = {
+        count: 2,
+        results: [
+          {
+            name: 'Luke Skywalker',
+            height: '172',
+            skin_color: 'fair',
+            eye_color: 'blue',
+            birth_year: '19BBY',
+          },
+          {
+            name: 'Leia Organa',
+            height: '150',
+            skin_color: 'light',
+            eye_color: 'brown',
+            birth_year: '19BBY',
+          },
+        ],
+      };
 
-  callApi = (requestParams) => {
-    // mock output
-    const data = {
-      count: 2,
-      results: [
-        {name: 'fake thing 1', url: 'http://fakethings.com/1'},
-        {name: 'fake thing 2', url: 'http://fakethings.com/2'},
-      ],
-    };
-    this.setState({data, requestParams});
-  }
+      setLoading(false);
+      setRequestData(data);
+      setResponseData(fakeApiResponse);
+    }, 3000);
+  };
 
-  render() {
-    return (
-      <React.Fragment>
-        <Header />
-        <div>Request Method: {this.state.requestParams.method}</div>
-        <div>URL: {this.state.requestParams.url}</div>
-        <Form handleApiCall={this.callApi} />
-        <Results data={this.state.data} />
-        <Footer />
-      </React.Fragment>
-    );
-  }
+  return (
+    <>
+      <Header />
+      <div>Request Method: {requestData.method}</div>
+      <div>URL: {requestData.url}</div>
+      <Form handleApiCall={handleApiCall} />
+      <Results loading={loading} data={responseData} />
+      <Footer />
+    </>
+  );
 }
 
 export default App;
