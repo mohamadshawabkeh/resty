@@ -1,31 +1,75 @@
+import  { useState } from 'react';
 import './form.scss';
 
 function Form(props) {
-  const handleSubmit = e => {
+  const [method, setMethod] = useState('GET');
+  const [url, setUrl] = useState('');
+  const [postData, setPostData] = useState('');
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {
-      method: 'GET',
-      url: 'https://pokeapi.co/api/v2/pokemon',
+      method,
+      url,
+      data: postData,
     };
     props.handleApiCall(formData);
   };
 
   return (
-    <>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
         <label>
           <span>URL: </span>
-          <input name="url" type="text" />
+          <input
+            name="url"
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Enter API URL"
+            required
+          />
           <button type="submit">GO!</button>
         </label>
-        <label className="methods">
-          <span id="get">GET</span>
-          <span id="post">POST</span>
-          <span id="put">PUT</span>
-          <span id="delete">DELETE</span>
-        </label>
+        <div className="methods">
+          <span
+            id="get"
+            className={method === 'GET' ? 'active' : ''}
+            onClick={() => setMethod('GET')}
+          >
+            GET
+          </span>
+          <span
+            id="post"
+            className={method === 'POST' ? 'active' : ''}
+            onClick={() => setMethod('POST')}
+          >
+            POST
+          </span>
+          <span
+            id="put"
+            className={method === 'PUT' ? 'active' : ''}
+            onClick={() => setMethod('PUT')}
+          >
+            PUT
+          </span>
+          <span
+            id="delete"
+            className={method === 'DELETE' ? 'active' : ''}
+            onClick={() => setMethod('DELETE')}
+          >
+            DELETE
+          </span>
+        </div>
+        {(method === 'POST' || method === 'PUT') && (
+          <textarea
+            value={postData}
+            onChange={(e) => setPostData(e.target.value)}
+            placeholder="Enter JSON data..."
+          />
+        )}
       </form>
-    </>
+    </div>
   );
 }
 

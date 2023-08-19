@@ -1,26 +1,76 @@
-$backgroundColor: #efefef;
-$radius: 40%;
+
+.form-container {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 form {
-  display: inline-block;
-  margin: auto;
-  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-  label {
-    display: flex;
-    margin: 1rem 0;
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
 
-    &.methods {
-      span {
-        cursor: pointer;
-        margin-right: 1rem;
-        padding: .25rem .5rem;
-        background: #ccc;
+span {
+  margin-right: 0.5rem;
+}
 
-        &:hover, &.active {
-          background: #fff;
-        }
-      }
-    }
-  }
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.button-container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.methods {
+  margin-top: 1rem;
+  display: flex;
+}
+
+.methods span {
+  margin-right: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.methods span.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.methods span.active:hover {
+  background-color: #0056b3;
 }
