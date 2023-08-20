@@ -1,19 +1,21 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import './form.scss';
 
-function Form(props) {
+function Form({ handleApiCall }) {
   const [method, setMethod] = useState('GET');
   const [url, setUrl] = useState('');
-  const [postData, setPostData] = useState('');
+  const [data, setData] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
+    
+    const requestData = {
       method,
       url,
-      data: postData,
+      data: method === 'GET' ? null : data,
     };
-    props.handleApiCall(formData);
+    
+    handleApiCall(requestData);
   };
 
   return (
@@ -33,28 +35,24 @@ function Form(props) {
         </label>
         <div className="methods">
           <span
-            id="get"
             className={method === 'GET' ? 'active' : ''}
             onClick={() => setMethod('GET')}
           >
             GET
           </span>
           <span
-            id="post"
             className={method === 'POST' ? 'active' : ''}
             onClick={() => setMethod('POST')}
           >
             POST
           </span>
           <span
-            id="put"
             className={method === 'PUT' ? 'active' : ''}
             onClick={() => setMethod('PUT')}
           >
             PUT
           </span>
           <span
-            id="delete"
             className={method === 'DELETE' ? 'active' : ''}
             onClick={() => setMethod('DELETE')}
           >
@@ -63,8 +61,8 @@ function Form(props) {
         </div>
         {(method === 'POST' || method === 'PUT') && (
           <textarea
-            value={postData}
-            onChange={(e) => setPostData(e.target.value)}
+            value={data}
+            onChange={(e) => setData(e.target.value)}
             placeholder="Enter JSON data..."
           />
         )}

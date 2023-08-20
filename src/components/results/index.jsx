@@ -1,17 +1,28 @@
 import './results.scss';
+import JSONPretty from 'react-json-pretty';
 
 function Results(props) {
   return (
-    <section>
+    <div className="results">
       {props.loading ? (
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          Loading...
-        </div>
+        <div>Loading...</div>
       ) : (
-        <pre>{props.data ? JSON.stringify(props.data, undefined, 2) : null}</pre>
+        <div>
+          {props.error ? (
+            <div className="error">{props.error}</div>
+          ) : (
+            <div>
+              <pre>{props.data ? JSON.stringify(props.data, null, 2) : null}</pre>
+              {props.data && (
+                <div className="json-pretty">
+                  <JSONPretty data={props.data}></JSONPretty>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
-    </section>
+    </div>
   );
 }
 
