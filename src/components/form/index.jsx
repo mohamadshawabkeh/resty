@@ -5,21 +5,51 @@ function Form({ handleApiCall }) {
   const [method, setMethod] = useState('GET');
   const [url, setUrl] = useState('');
   const [data, setData] = useState('');
+  const [error, setError] = useState(null); // State to hold error messages
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const requestData = {
-      method,
-      url,
-      data: method === 'GET' ? null : data,
-    };
-    
-    handleApiCall(requestData);
+  
+    try {
+      setError(null);
+      
+      const requestData = {
+        method,
+        url,
+        data: method === 'GET' ? null : JSON.parse(data),
+      };
+  
+      const response = await fetch(requestData.url, {
+        method: requestData.method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:
+          requestData.method !== 'GET' ? JSON.stringify(requestData.data) : null,
+      });
+  
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+  
+      const responseData = await response.json();
+  
+      console.log('Response Data:', responseData);
+  
+      handleApiCall(requestData);
+    } catch (error) {
+      console.error('Error:', error);
+  
+      setError('An error occurred while making the API request.');
+    }
   };
+  
 
   return (
     <div className="form-container">
+      {/* Render the error message if an error occurs */}
+      {error && <div className="error">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <label>
           <span>URL: </span>

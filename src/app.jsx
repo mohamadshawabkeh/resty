@@ -1,23 +1,60 @@
-import { useState, useEffect } from 'react';
-import Header from './components/header';
+import { useState, useEffect, useReducer } from 'react';
+import Header from './components/header/index';
 import Footer from './components/footer';
-import Form from './components/form';
-import Results from './components/results';
+import Form from './components/form/index';
+import Results from './components/results/index';
 import './app.scss';
+import History from './components/history/index';
+
+const initialState = {
+  loading: false,
+  responseData: null,
+  error: null,
+  history: [],
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'API_REQUEST':
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        responseData: null,
+      };
+    case 'API_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        responseData: action.payload.responseData,
+        history: [
+          ...state.history,
+          {
+            method: action.payload.method,
+            url: action.payload.url,
+            results: action.payload.responseData,
+          },
+        ],
+      };
+    case 'API_ERROR':
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error,
+      };
+    default:
+      return state;
+  }
+}
 
 function App() {
   const [requestData, setRequestData] = useState({});
-  const [responseData, setResponseData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     if (requestData.url && requestData.method) {
-      setLoading(true);
-      setError(null);
-      setResponseData(null);
+      dispatch({ type: 'API_REQUEST' });
 
-      // Send API request
       fetch(requestData.url, {
         method: requestData.method,
         headers: {
@@ -25,23 +62,24 @@ function App() {
         },
         body: requestData.data,
       })
-        .then((response) => {
-          // Parse JSON response
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
-          setLoading(false);
-          setResponseData(data);
+          dispatch({
+            type: 'API_SUCCESS',
+            payload: {
+              responseData: data,
+              method: requestData.method,
+              url: requestData.url,
+            },
+          });
         })
         .catch((error) => {
-          setLoading(false);
-          setError(error.message || 'An error occurred');
+          dispatch({ type: 'API_ERROR', payload: { error } });
         });
     }
   }, [requestData]);
 
   const handleApiCall = (data) => {
-    setResponseData(null);
     setRequestData(data);
   };
 
@@ -53,7 +91,8 @@ function App() {
         <div>URL: {requestData.url}</div>
       </div>
       <Form handleApiCall={handleApiCall} />
-      <Results loading={loading} data={responseData} error={error} />
+      <History history={state.history} handleApiCall={handleApiCall} />
+      <Results loading={state.loading} data={state.responseData} error={state.error} />
       <Footer />
     </div>
   );
